@@ -6,22 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MyNFT Demo</title>
     <script src="https://cdn.jsdelivr.net/npm/ethers@6.8.1/dist/ethers.umd.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body>
-    <h2>MyNFT Demo (ERC-721)</h2>
-    <button id="connectBtn">Kết nối MetaMask</button>
-    <div id="walletAddress"></div>
+<body class="bg-gradient-to-br from-purple-100 to-purple-300 min-h-screen flex flex-col items-center justify-center">
+    <div class="bg-white bg-opacity-80 rounded-xl shadow-lg p-8 mt-10 w-full max-w-md">
+        <h2 class="text-3xl font-bold text-purple-700 mb-6 text-center">MyNFT Demo (ERC-721)</h2>
+        <button id="connectBtn"
+            class="w-full mb-4 py-2 px-4 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold transition">Kết
+            nối MetaMask</button>
+        <div id="walletAddress" class="mb-6 text-center text-green-700 bg-green-100 border border-green-300 rounded-lg py-2 px-3 font-mono" style="display:none;"></div>
 
-    <h3>Mint NFT</h3>
-    <button id="mintBtn">Mint NFT</button>
-    <div id="mintStatus"></div>
+        <h3 class="text-xl font-semibold text-purple-700 mb-2">Mint NFT</h3>
+        <button id="mintBtn"
+            class="w-full mb-2 py-2 px-4 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold transition">Mint
+            NFT</button>
+        <div id="mintStatus" class="mb-6 text-center text-green-700 bg-green-100 border border-green-300 rounded-lg py-2 px-3 font-mono" style="display:none;"></div>
 
-    <h3>Xem NFT của bạn</h3>
-    <input id="tokenIdInput" type="number" placeholder="Nhập Token ID" />
-    <button id="viewBtn">Xem NFT</button>
-    <div class="nft-info" id="nftInfo"></div>
-
+        <h3 class="text-xl font-semibold text-purple-700 mb-2">Xem NFT của bạn</h3>
+        <div class="flex mb-2">
+            <input id="tokenIdInput" type="number" placeholder="Nhập Token ID"
+                class="flex-1 rounded-l-lg border border-purple-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400" />
+            <button id="viewBtn"
+                class="rounded-r-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 transition">Xem
+                NFT</button>
+        </div>
+        <div class="nft-info text-center text-green-700 bg-green-100 border border-green-300 rounded-lg py-2 px-3 font-mono" id="nftInfo" style="display:none;"></div>
+    </div>
     <script>
         // Thay địa chỉ contract và ABI bên dưới bằng thông tin thực tế của bạn
         const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
@@ -39,8 +50,10 @@
                 provider = new ethers.BrowserProvider(window.ethereum);
                 await provider.send("eth_requestAccounts", []);
                 signer = await provider.getSigner();
+                const address = await signer.getAddress();
                 document.getElementById("walletAddress").innerText =
-                    "Địa chỉ ví: " + (await signer.getAddress());
+                    "Địa chỉ ví: " + address;
+                document.getElementById("walletAddress").style.display = "block";
                 contract = new ethers.Contract(
                     CONTRACT_ADDRESS,
                     CONTRACT_ABI,
@@ -77,6 +90,7 @@
                 }
 
                 document.getElementById("mintStatus").innerText = "Mint thành công!" + tokenIdMsg;
+                document.getElementById("mintStatus").style.display = "block";
             } catch (e) {
                 document.getElementById("mintStatus").innerText =
                     "Mint thất bại: " + e.message;
@@ -94,9 +108,11 @@
                 document.getElementById(
                     "nftInfo"
                 ).innerHTML = `<b>Chủ sở hữu:</b> ${owner}<br><b>Metadata URI:</b> <a href="${uri}" target="_blank">${uri}</a>`;
+                document.getElementById("nftInfo").style.display = "block";
             } catch (e) {
                 document.getElementById("nftInfo").innerText =
                     "Không tìm thấy NFT hoặc lỗi: " + e.message;
+                document.getElementById("nftInfo").style.display = "block";
             }
         };
     </script>
