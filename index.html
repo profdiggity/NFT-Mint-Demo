@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MyNFT Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.8.1/dist/ethers.umd.min.js"></script>
+  </head>
+  <body>
+    <h2>MyNFT Demo (ERC-721)</h2>
+    <button id="connectBtn">Kết nối MetaMask</button>
+    <div id="walletAddress"></div>
+
+    <h3>Mint NFT</h3>
+    <button id="mintBtn">Mint NFT</button>
+    <div id="mintStatus"></div>
+
+    <h3>Xem NFT của bạn</h3>
+    <input id="tokenIdInput" type="number" placeholder="Nhập Token ID" />
+    <button id="viewBtn">Xem NFT</button>
+    <div class="nft-info" id="nftInfo"></div>
+
+    <script>
+      // Thay địa chỉ contract và ABI bên dưới bằng thông tin thực tế của bạn
+      const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+      const CONTRACT_ABI = [
+        "function mint(address to) public",
+        "function tokenURI(uint256 tokenId) public view returns (string)",
+        "function ownerOf(uint256 tokenId) public view returns (address)",
+      ];
+
+      let provider, signer, contract;
+
+      document.getElementById("connectBtn").onclick = async () => {
+        if (window.ethereum) {
+          provider = new ethers.BrowserProvider(window.ethereum);
+          await provider.send("eth_requestAccounts", []);
+          signer = await provider.getSigner();
+          document.getElementById("walletAddress").innerText =
+            "Địa chỉ ví: " + (await signer.getAddress());
+          contract = new ethers.Contract(
+            CONTRACT_ADDRESS,
+            CONTRACT_ABI,
+            signer
+          );
+        } else {
+          alert("Cài đặt MetaMask để sử dụng!");
+        }
+      };
+
+      document.getElementById("mintBtn").onclick = async () => {
+        if (!contract || !signer) return alert("Hãy kết nối ví trước!");
+        try {
+          const tx = await contract.mint(await signer.getAddress());
+          document.getElementById("mintStatus").innerText =
+            "Đang gửi giao dịch...";
+          await tx.wait();
+          document.getElementById("mintStatus").innerText = "Mint thành công!";
+        } catch (e) {
+          document.getElementById("mintStatus").innerText =
+            "Mint thất bại: " + e.message;
+        }
+      };
+
+      document.getElementById("viewBtn").onclick = async () => {
+        if (!contract) return alert("Hãy kết nối ví trước!");
+        const tokenId = document.getElementById("tokenIdInput").value;
+        if (!tokenId) return alert("Nhập Token ID!");
+        try {
+          const owner = await contract.ownerOf(tokenId);
+          const uri = await contract.tokenURI(tokenId);
+          document.getElementById(
+            "nftInfo"
+          ).innerHTML = `<b>Chủ sở hữu:</b> ${owner}<br><b>Metadata URI:</b> <a href="${uri}" target="_blank">${uri}</a>`;
+        } catch (e) {
+          document.getElementById("nftInfo").innerText =
+            "Không tìm thấy NFT hoặc lỗi: " + e.message;
+        }
+      };
+    </script>
+  </body>
+</html>

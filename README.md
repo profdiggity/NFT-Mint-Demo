@@ -22,14 +22,14 @@ Copy the contract address printed in the terminal (e.g., `0x...`).
 - Copy the private key of the first account and import it into MetaMask.
 - Switch MetaMask to the “Localhost 8545” network.
 
-## 4. Edit `nft-demo.html`
+## 4. Edit `index.html`
 - Replace the `CONTRACT_ADDRESS` variable with your deployed contract address.
 
 ## 5. Run a Local Web Server and Open the Demo
 ```bash
 npx serve .
 ```
-- Visit `http://localhost:3000/nft-demo.html` (or the corresponding port).
+- Visit `http://localhost:3000/index.html` (or the corresponding port).
 - Connect MetaMask, mint, and view your NFT.
 
 ## 6. Notes
