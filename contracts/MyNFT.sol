@@ -24,4 +24,8 @@ contract MyNFT is ERC721, Ownable {
     function setBaseURI(string memory _baseTokenURI) public onlyOwner {
         baseTokenURI = _baseTokenURI;
     }
+
+    function totalSupply() public view returns (uint256) {
+        return nextTokenId;
+    }
 }
