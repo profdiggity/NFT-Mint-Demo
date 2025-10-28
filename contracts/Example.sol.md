@@ -27,7 +27,47 @@ contract SimpleStore {
 }
 ```
 
-## Developing with Ethereum: Caveats
+## What is an ABI?
+
+An ABI is the Application Binary Interface for a smart contract. It is a JSON description that tells tools and wallets how to talk to the contract on chain. It lists callable functions, their inputs and outputs, whether they are view or payable, plus events and errors. It does not include code, only the interface, so libraries like web3 and ethers can encode calldata and decode results correctly.
+
+Tiny example: 
+
+```json
+[
+  {
+    "type": "function",
+    "name": "balanceOf",
+    "stateMutability": "view",
+    "inputs": [{ "name": "account", "type": "address" }],
+    "outputs": [{ "name": "", "type": "uint256" }]
+  },
+  {
+    "type": "event",
+    "name": "Transfer",
+    "inputs": [
+      { "name": "from", "type": "address", "indexed": true },
+      { "name": "to", "type": "address", "indexed": true },
+      { "name": "value", "type": "uint256", "indexed": false }
+    ],
+    "anonymous": false
+  }
+]
+```
+
+### Why it matters
+
+* Frontends and scripts use the ABI to encode function calls and decode returned data
+* Wallets use it to show named methods and types rather than raw bytes
+* Logs from events are decoded using the ABI so you get readable values
+
+### Tips
+
+* Always use the exact ABI that matches the deployed bytecode
+* Watch out for overloaded functions which share a name but have different inputs
+* Keep the ABI with your deployment artifacts so your app and tests stay in sync
+
+### Developing with Ethereum: Caveats
 
 * Use recent compiler versions with a fixed pragma to avoid unexpected behavior
 * Watch for risks such as reentrancy and integer overflows which are mostly prevented in modern compilers but still require careful design
